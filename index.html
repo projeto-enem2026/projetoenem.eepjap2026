@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Simulado ENEM Pro</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #eef2f7;
+    margin: 0;
+}
+
+header {
+    background: #0f172a;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+#area {
+    font-weight: bold;
+    color: #2563eb;
+}
+
+#tempo {
+    float: right;
+    font-weight: bold;
+    color: red;
+}
+
+button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    border: 1px solid #ccc;
+    background: #f9fafb;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: left;
+}
+
+button:hover {
+    background: #e2e8f0;
+}
+
+#resultado {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#reiniciar {
+    margin-top: 20px;
+    padding: 10px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Simulado ENEM Pro</h1>
+</header>
+
+<div class="container">
+    <div>
+        <span id="area"></span>
+        <span id="tempo"></span>
+    </div>
+    <h2 id="pergunta"></h2>
+    <div id="alternativas"></div>
+    <div id="resultado"></div>
+    <button id="reiniciar" onclick="location.reload()" style="display:none;">Refazer Simulado</button>
+</div>
+
+<script>
+const perguntas = [
+
+{
+area: "Linguagens",
+pergunta: "A função conativa da linguagem tem como foco:",
+opcoes: [
+"O emissor",
+"O receptor",
+"A mensagem",
+"O código",
+"O contexto"
+],
+correta: 1
+},
+
+{
+area: "Humanas",
+pergunta: "A Independência do Brasil ocorreu em:",
+opcoes: [
+"1808",
+"1822",
+"1889",
+"1500",
+"1930"
+],
+correta: 1
+},
+
+{
+area: "Matemática",
+pergunta: "Se 3x = 21, o valor de x é:",
+opcoes: [
+"5",
+"6",
+"7",
+"8",
+"9"
+],
+correta: 2
+},
+
+{
+area: "Natureza",
+pergunta: "O gás essencial para respiração humana é:",
+opcoes: [
+"Nitrogênio",
+"Gás Carbônico",
+"Oxigênio",
+"Hidrogênio",
+"Metano"
+],
+correta: 2
+},
+
+{
+area: "Matemática",
+pergunta: "A área de um quadrado de lado 4 é:",
+opcoes: [
+"8",
+"12",
+"14",
+"16",
+"20"
+],
+correta: 3
+}
+
+];
+
+let atual = 0;
+let pontos = 0;
+let tempoRestante = 120; // 2 minutos
+
+function iniciarTimer() {
+    const timer = setInterval(() => {
+        tempoRestante--;
+        document.getElementById("tempo").innerText = "Tempo: " + tempoRestante + "s";
+
+        if (tempoRestante <= 0) {
+            clearInterval(timer);
+            finalizarQuiz();
+        }
+    }, 1000);
+}
+
+function carregarPergunta() {
+    const p = perguntas[atual];
+    document.getElementById("area").innerText = p.area;
+    document.getElementById("pergunta").innerText =
+        "Questão " + (atual + 1) + ": " + p.pergunta;
+
+    const div = document.getElementById("alternativas");
+    div.innerHTML = "";
+
+    p.opcoes.forEach((opcao, index) => {
+        const btn = document.createElement("button");
+        btn.innerText = String.fromCharCode(65 + index) + ") " + opcao;
+        btn.onclick = () => verificarResposta(index);
+        div.appendChild(btn);
+    });
+}
+
+function verificarResposta(index) {
+    if (index === perguntas[atual].correta) {
+        pontos++;
+    }
+
+    atual++;
+
+    if (atual < perguntas.length) {
+        carregarPergunta();
+    } else {
+        finalizarQuiz();
+    }
+}
+
+function finalizarQuiz() {
+    document.getElementById("pergunta").innerText = "Simulado Finalizado!";
+    document.getElementById("alternativas").innerHTML = "";
+    document.getElementById("area").innerText = "";
+    document.getElementById("tempo").innerText = "";
+
+    let porcentagem = (pontos / perguntas.length) * 100;
+
+    document.getElementById("resultado").innerText =
+        "Você acertou " + pontos + " de " + perguntas.length +
+        " questões. Desempenho: " + porcentagem.toFixed(0) + "%";
+
+    document.getElementById("reiniciar").style.display = "block";
+}
+
+iniciarTimer();
+carregarPergunta();
+</script>
+
+</body>
+</html>
